@@ -10,12 +10,14 @@ plugins {
 
 android {
     namespace = "com.lap.lapcoffee"
-    compileSdk = compileSdkVersion 31
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+        // Hapus opsi ini jika menyebabkan kesalahan
+        // options.compilerArgs << "-Xlint:deprecation" // Jika error, komentar atau hapus baris ini
     }
 
     kotlinOptions {
@@ -23,20 +25,20 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.lap.lapcoffee"
-        minSdk = minSdkVersion 21
-        targetSdk = targetSdkVersion 31
-        versionCode = versionCode 1
-        versionName = versionName "1.0"
+        applicationId "com.lap.lapcoffee"
+        minSdk = 23
+        targetSdk = 34
+        versionCode = 1
+        versionName "1.0" // Pastikan tidak ada `versionName =` sebelumnya
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            // Enable code shrinking, obfuscation, and optimization for release builds.
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig = signingConfigs.debug
+            signingConfig signingConfigs.debug // Sesuaikan ini jika perlu
         }
     }
 }
@@ -48,5 +50,5 @@ flutter {
 dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
 
-    // Other dependencies...
+    // Tambahkan dependensi lainnya di sini
 }
