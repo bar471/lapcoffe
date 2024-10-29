@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "979684245593",
+    "project_id": "mobile-27151",
+    "storage_bucket": "mobile-27151.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979684245593:android:6a057b50c15a77c1d93148",
+        "android_client_info": {
+          "package_name": "com.lapcoffee.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBncdUaz0OzaUuvD4fBFkVAvf4N5UdgPxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:979684245593:android:351ab862310d251dd93148",
+        "android_client_info": {
+          "package_name": "com.mobile.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBncdUaz0OzaUuvD4fBFkVAvf4N5UdgPxA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
