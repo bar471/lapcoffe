@@ -82,6 +82,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           ),
                         )
                       : _buildWidgetButtonCreateTask(),
+                  if (widget.isEdit) _buildWidgetButtonDeleteTask(), // Add Delete button if editing
                 ],
               ),
             ),
@@ -177,62 +178,115 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   Widget _buildWidgetButtonCreateTask() {
-  return Container(
-    width: double.infinity,
-    color: Colors.white,
-    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: appColor.colorTertiary, // replaces `primary`
-        foregroundColor: Colors.white, // replaces `onPrimary`
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0),
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: appColor.colorTertiary, // replaces `primary`
+          foregroundColor: Colors.white, // replaces `onPrimary`
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
         ),
-      ),
-      onPressed: () async {
-        String name = controllerName.text;
-        String description = controllerDescription.text;
-        String date = controllerDate.text;
-        if (name.isEmpty) {
-          _showSnackBarMessage('Name is required');
-          return;
-        } else if (description.isEmpty) {
-          _showSnackBarMessage('Description is required');
-          return;
-        }
-        setState(() => isLoading = true);
-        if (widget.isEdit) {
-          DocumentReference documentTask = firestore.collection('tasks').doc(widget.documentId);
-          firestore.runTransaction((transaction) async {
-            DocumentSnapshot task = await transaction.get(documentTask);
-            if (task.exists) {
-              await transaction.update(
-                documentTask,
-                <String, dynamic>{
-                  'name': name,
-                  'description': description,
-                  'date': date,
-                },
-              );
+        onPressed: () async {
+          String name = controllerName.text;
+          String description = controllerDescription.text;
+          String date = controllerDate.text;
+          if (name.isEmpty) {
+            _showSnackBarMessage('Name is required');
+            return;
+          } else if (description.isEmpty) {
+            _showSnackBarMessage('Description is required');
+            return;
+          }
+          setState(() => isLoading = true);
+          if (widget.isEdit) {
+            DocumentReference documentTask = firestore.collection('tasks').doc(widget.documentId);
+            firestore.runTransaction((transaction) async {
+              DocumentSnapshot task = await transaction.get(documentTask);
+              if (task.exists) {
+                await transaction.update(
+                  documentTask,
+                  <String, dynamic>{
+                    'name': name,
+                    'description': description,
+                    'date': date,
+                  },
+                );
+                Navigator.pop(context, true);
+              }
+            });
+          } else {
+            CollectionReference tasks = firestore.collection('tasks');
+            DocumentReference result = await tasks.add(<String, dynamic>{
+              'name': name,
+              'description': description,
+              'date': date,
+            });
+            if (result.id.isNotEmpty) {
               Navigator.pop(context, true);
             }
-          });
-        } else {
-          CollectionReference tasks = firestore.collection('tasks');
-          DocumentReference result = await tasks.add(<String, dynamic>{
-            'name': name,
-            'description': description,
-            'date': date,
-          });
-          if (result.id.isNotEmpty) {
+          }
+        },
+        child: Text(widget.isEdit ? 'UPDATE TASK' : 'CREATE TASK'),
+      ),
+    );
+  }
+
+  Widget _buildWidgetButtonDeleteTask() {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4.0),
+          ),
+        ),
+        onPressed: () async {
+          bool? isConfirmed = await _showDeleteConfirmationDialog();
+          if (isConfirmed == true) {
+            setState(() => isLoading = true);
+            DocumentReference documentTask = firestore.collection('tasks').doc(widget.documentId);
+            await documentTask.delete();
             Navigator.pop(context, true);
           }
-        }
+        },
+        child: Text('DELETE TASK'),
+      ),
+    );
+  }
+
+  Future<bool?> _showDeleteConfirmationDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Task'),
+          content: Text('Are you sure you want to delete this task?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
       },
-      child: Text(widget.isEdit ? 'UPDATE TASK' : 'CREATE TASK'),
-    ),
-  );
-}
+    );
+  }
 
   void _showSnackBarMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

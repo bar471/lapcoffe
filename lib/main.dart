@@ -12,6 +12,14 @@ import 'package:lapcoffee/controllers/weather_controller.dart';
 import 'package:lapcoffee/controllers/http_controller.dart';
 import 'package:lapcoffee/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Inisialisasi Firebase jika belum terinisialisasi di background
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
   // Initialize Firebase and ensure Widgets are properly initialized
@@ -19,6 +27,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+   // Background message handler
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // Register AuthController and HttpController with GetX
   Get.put(AuthController());
@@ -42,6 +53,35 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+ // Request Notification Permission (for iOS)
+    FirebaseMessaging.instance.requestPermission();
+
+    // FCM Token (useful if you need to send notifications to a specific device)
+    FirebaseMessaging.instance.getToken().then((token) {
+      print("FCM Token: $token");
+    });
+
+    // Listen for foreground messages
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Received a foreground message: ${message.notification?.title}");
+      if (message.notification != null) {
+        // You can customize your UI for the notification here
+        Get.snackbar(
+          message.notification!.title ?? 'New Notification',
+          message.notification!.body ?? '',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.greenAccent,
+          colorText: Colors.white,
+        );
+      }
+    });
+
+    // Handling messages when the app is opened from a notification
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("Notification caused app to open: ${message.notification?.title}");
+      // Navigate to a specific page or handle as needed
+    });
+
     return GetMaterialApp(
       title: 'Coffee App',
       theme: ThemeData(
