@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lapcoffee/view/qr_page.dart';
 import '../controllers/cart_controller.dart';
 import '../models/cart_model.dart';
 import 'package:lapcoffee/view/weather_view.dart';
@@ -75,6 +76,72 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  Future<void> _editTaskDetails(DocumentSnapshot document) async {
+    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+
+    TextEditingController cupSizeController = TextEditingController(text: data['cupSize']);
+    TextEditingController sugarLevelController = TextEditingController(text: data['sugarLevel']);
+    TextEditingController additionalNotesController = TextEditingController(text: data['additionalNotes']);
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Edit Detail untuk ${data['name']}'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: cupSizeController,
+                decoration: InputDecoration(labelText: 'Ukuran Cup'),
+              ),
+              TextField(
+                controller: sugarLevelController,
+                decoration: InputDecoration(labelText: 'Ukuran Gula'),
+              ),
+              TextField(
+                controller: additionalNotesController,
+                decoration: InputDecoration(labelText: 'Deskripsi Tambahan'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Batal'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await _firestore.collection('orders').doc(document.id).update({
+                  'cupSize': cupSizeController.text,
+                  'sugarLevel': sugarLevelController.text,
+                  'additionalNotes': additionalNotesController.text,
+                  'timestamp': FieldValue.serverTimestamp(),
+                });
+
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Detail telah diperbarui')),
+                );
+              },
+              child: Text('Simpan'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _deleteTask(DocumentSnapshot document) async {
+    await _firestore.collection('orders').doc(document.id).delete();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Task berhasil dihapus')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     List<CartItemModel> cartItems = widget.cartController.getCartItems();
@@ -137,6 +204,61 @@ class _CartPageState extends State<CartPage> {
               },
             ),
           ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              'Task yang Sudah Dibuat',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore.collection('orders').orderBy('timestamp', descending: true).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('Belum ada task yang dibuat'));
+                }
+
+                return ListView(
+                  children: snapshot.data!.docs.map((document) {
+                    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                    return ListTile(
+                      title: Text(data['name'] ?? 'Unknown'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Ukuran Cup: ${data['cupSize']}'),
+                          Text('Ukuran Gula: ${data['sugarLevel']}'),
+                          Text('Deskripsi Tambahan: ${data['additionalNotes']}'),
+                          Text('Jumlah: ${data['quantity']}'),
+                          Text('Total Harga: Rp ${data['price'] * data['quantity']}'),
+                          Text('Waktu: ${data['timestamp'] != null ? (data['timestamp'] as Timestamp).toDate().toString() : 'Unknown'}'),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () => _editTaskDetails(document),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () => _deleteTask(document),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                );
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -173,6 +295,19 @@ class _CartPageState extends State<CartPage> {
                   ),
                   child: const Text('Lihat Cuaca Terkini'),
                 ),
+                   const SizedBox(height: 10),
+      ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const QRGeneratorView()),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF6B4226),
+        ),
+        child: const Text('Lihat/Mindai QR'),
+      ),
               ],
             ),
           ),

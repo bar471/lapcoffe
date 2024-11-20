@@ -63,12 +63,12 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: const Color(0xFF6F4E37), // Dark coffee brown color
+        backgroundColor: const Color(0xFF6F4E37),
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFDAB98E), Color(0xFF6F4E37)], // Coffee-inspired gradient
+            colors: [Color(0xFFDAB98E), Color(0xFF6F4E37)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -80,12 +80,12 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             TextField(
               controller: _emailController,
-              style: const TextStyle(color: Color(0xFF3E2723)), // Darker brown text color
+              style: const TextStyle(color: Color(0xFF3E2723)),
               decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle: const TextStyle(color: Color(0xFF3E2723)),
                 filled: true,
-                fillColor: const Color(0xFFFFF3E0), // Light coffee cream background
+                fillColor: const Color(0xFFFFF3E0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -117,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                 backgroundImage: _selectedImage != null
                     ? FileImage(_selectedImage!)
                     : const AssetImage('assets/default_profile.png') as ImageProvider,
-                backgroundColor: const Color(0xFFBCAAA4), // Light coffee color
+                backgroundColor: const Color(0xFFBCAAA4),
                 child: _selectedImage == null
                     ? const Icon(Icons.add_a_photo, size: 40, color: Colors.white)
                     : null,
@@ -127,35 +127,27 @@ class _LoginPageState extends State<LoginPage> {
             Obx(() {
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6F4E37), // Dark coffee brown color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
+                  backgroundColor: const Color(0xFF6F4E37),
                 ),
-                onPressed: _authController.isLoading.value
-                    ? null
-                    : () {
-                        if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-                          Get.snackbar('Error', 'Email and password cannot be empty', backgroundColor: Colors.red, colorText: Colors.white);
-                          return;
-                        }
-                        _authController.loginUser(
-                          _emailController.text.trim(),
-                          _passwordController.text.trim(),
-                          imagePath: _selectedImage?.path,
-                        );
-                      },
+                onPressed: () {
+                  _authController.loginUser(
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                    imagePath: _selectedImage?.path,
+                  );
+                },
                 child: _authController.isLoading.value
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const CircularProgressIndicator()
                     : const Text('Login'),
               );
             }),
-            const SizedBox(height: 16),
             TextButton(
-              onPressed: () => Get.to(() => const RegisterPage()),
-              child: const Text("Don't have an account? Register"),
-              style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFF6F4E37), // Coffee color text
+              onPressed: () {
+                Get.to(() => RegisterPage());
+              },
+              child: const Text(
+                'Register Here',
+                style: TextStyle(color: Color(0xFF3E2723)),
               ),
             ),
           ],

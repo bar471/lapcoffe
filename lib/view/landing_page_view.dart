@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lapcoffee/view/login_page_view.dart';
 import 'package:lapcoffee/main.dart';
+import 'package:lapcoffee/view/music_list_view.dart'; // Import MusicListView
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -55,8 +56,7 @@ class LandingPage extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>  LoginPage()),
+                      MaterialPageRoute(builder: (context) => LoginPage()),
                     );
                   },
                   borderRadius: BorderRadius.circular(30),
@@ -64,8 +64,7 @@ class LandingPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 15),
                     decoration: BoxDecoration(
-                      color:
-                          const Color(0xFFE0A75E), // Ganti sesuai warna palet
+                      color: const Color(0xFFE0A75E), // Ganti sesuai warna palet
                       borderRadius: BorderRadius.circular(30),
                       boxShadow: [
                         BoxShadow(
@@ -86,7 +85,7 @@ class LandingPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20), // Add spacing between buttons
+                const SizedBox(height: 20),
                 InkWell(
                   onTap: () {
                     // Navigate to HttpView to see articles in WebView
@@ -109,6 +108,38 @@ class LandingPage extends StatelessWidget {
                     ),
                     child: const Text(
                       'View Articles',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20), // Add spacing between buttons
+                InkWell(
+                  onTap: () {
+                    // Navigate to MusicListView
+                    Get.to(() => MusicListView());
+                  },
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE0A75E), // Same color palette
+                      borderRadius: BorderRadius.circular(30),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4), // Bayangan pada tombol
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      'Music List',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,

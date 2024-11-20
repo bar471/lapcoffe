@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lapcoffee/controllers/auth_controller.dart';  // Pastikan file ini sudah diimpor dengan benar
+import 'package:lapcoffee/controllers/auth_controller.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key); // Menggunakan const constructor
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -16,7 +16,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    // Jangan lupa untuk membuang controller saat widget dihapus
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -27,8 +26,16 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
+        backgroundColor: const Color(0xFF6F4E37), // Dark coffee brown color
       ),
-      body: Padding(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFDAB98E), Color(0xFF6F4E37)], // Coffee-inspired gradient
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -36,23 +43,46 @@ class _RegisterPageState extends State<RegisterPage> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress, // Tambahkan jenis input
+              style: const TextStyle(color: Color(0xFF3E2723)), // Darker brown text color
+              decoration: InputDecoration(
+                labelText: 'Email',
+                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                filled: true,
+                fillColor: const Color(0xFFFFF3E0), // Light coffee cream background
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+              keyboardType: TextInputType.emailAddress,
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              obscureText: true,  // Untuk keamanan, sembunyikan teks kata sandi
-              decoration: InputDecoration(labelText: 'Password'),
+              style: const TextStyle(color: Color(0xFF3E2723)),
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                filled: true,
+                fillColor: const Color(0xFFFFF3E0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Obx(() {
               return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6F4E37), // Dark coffee brown color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                ),
                 onPressed: _authController.isLoading.value
-                    ? null // Jika loading, nonaktifkan tombol
+                    ? null
                     : () {
-                        // Validasi input
-                        if (_emailController.text.isEmpty ||
-                            _passwordController.text.isEmpty) {
+                        if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
                           Get.snackbar(
                             'Error',
                             'Email and password cannot be empty',
@@ -62,13 +92,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           return;
                         }
                         _authController.registerUser(
-                          _emailController.text.trim(), // Menghilangkan spasi ekstra
+                          _emailController.text.trim(),
                           _passwordController.text.trim(),
                         );
                       },
                 child: _authController.isLoading.value
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : Text('Register'),
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Register'),
               );
             }),
           ],

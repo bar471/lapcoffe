@@ -10,7 +10,7 @@ plugins {
 
 android {
     namespace = "com.lap.lapcoffee"
-    compileSdk = 34
+    compileSdkVersion 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         applicationId "com.lap.lapcoffee"
-        minSdk = 23
+        minSdkVersion 23
         targetSdk = 34
         versionCode = 1
         versionName "1.0" // Pastikan tidak ada `versionName =` sebelumnya
