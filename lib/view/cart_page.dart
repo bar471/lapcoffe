@@ -280,7 +280,7 @@ class _CartPageState extends State<CartPage> {
                     );
                     Navigator.pop(context);
                   },
-                  child: const Text('Place Order'),
+                  child: const Text('Pesan Sekarang!'),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(

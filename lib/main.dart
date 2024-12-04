@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lapcoffee/view/takeaway_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -116,7 +117,8 @@ class MyApp extends StatelessWidget {
         GetPage(name: Routes.REVIEW, page: () => ReviewPage()),
         GetPage(
             name: Routes.MUSIC_LIST,
-            page: () => MusicListView()), // Music List Route
+            page: () => MusicListView()),
+            GetPage(name: Routes.TAKEAWAY, page: () => const TakeawayPage()), // Music List Route
       ],
     );
   }
@@ -132,5 +134,6 @@ abstract class Routes {
   static const ARTICLE_DETAILS = '/article-details';
   static const QRCODE = '/qr';
   static const REVIEW = '/review';
-  static const MUSIC_LIST = '/music-list'; // Add route for Music List
+  static const MUSIC_LIST = '/music-list'; 
+  static const TAKEAWAY = '/takeaway'; // Add route for Music List
 }

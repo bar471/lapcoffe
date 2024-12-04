@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import '../controllers/menu_controller.dart';
 import '../controllers/cart_controller.dart';
 import '../controllers/auth_controller.dart';
+import '../models/menu_model.dart';
+import '../models/cart_model.dart';
 import 'cart_page.dart';
 import 'package:lapcoffee/view/review_page.dart'; // Import file ReviewPage
-import '../controllers/microphone_controller.dart'; // Import controller mikrofon
-import 'package:lapcoffee/models/menu_model.dart';
-import 'package:lapcoffee/models/cart_model.dart';
+import 'package:lapcoffee/view/takeaway_view.dart'; // Import file TakeAwayPage
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -20,32 +21,44 @@ class _MenuPageState extends State<MenuPage> {
   final MenuController _menuController = MenuController();
   final CartController _cartController = CartController();
   final AuthController _authController = Get.find<AuthController>();
-  late MicrophoneController _microphoneController;
 
-  TextEditingController _searchController = TextEditingController();
-  List<MenuModel> _menuList = [];
+  String selectedCategory = "All"; // Default kategori
+  String searchQuery = ""; // Untuk menyimpan query pencarian
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
 
   @override
   void initState() {
     super.initState();
-    _menuList = _menuController.getMenuList();
-    _microphoneController = MicrophoneController(_searchController);
-  }
-
-  // Fungsi untuk filter menu berdasarkan query
-  void _filterMenu(String query) {
-    setState(() {
-      _menuList = _menuController.getMenuList().where(
-            (menu) => menu.name.toLowerCase().contains(query.toLowerCase()),
-      ).toList();
-    });
+    _speech = stt.SpeechToText();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Mendapatkan menu berdasarkan kategori dan pencarian
+    List<MenuModel> menuList = selectedCategory == "All"
+        ? _menuController.searchMenu(searchQuery) // Menerapkan filter pencarian
+        : _menuController.getMenuByCategory(selectedCategory);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Coffee Menu'),
+        title: Row(
+          children: [
+            // Foto Profil
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Obx(() {
+                final user = _authController.user.value;
+                return CircleAvatar(
+                  backgroundImage: user?.imagePath != null && user!.imagePath.isNotEmpty
+                      ? NetworkImage(user.imagePath)
+                      : const AssetImage('assets/default_profile.png') as ImageProvider,
+                );
+              }),
+            ),
+            const Text('Coffee Menu'),
+          ],
+        ),
         backgroundColor: const Color(0xFF6B4226),
         actions: [
           IconButton(
@@ -54,29 +67,30 @@ class _MenuPageState extends State<MenuPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => CartPage(cartController: _cartController)),
+                  builder: (context) => CartPage(cartController: _cartController),
+                ),
               );
             },
           ),
-          GestureDetector(
-            onTap: () {
+          // Ikon untuk Take Away
+          IconButton(
+            icon: const Icon(Icons.fastfood),
+            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ReviewPage()), // Navigate to ReviewPage
+                MaterialPageRoute(builder: (context) =>   const TakeawayPage()), // Navigate to TakeAwayPage
               );
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: IconButton(
-                icon: const Icon(Icons.rate_review), // Ganti dengan icon review
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ReviewPage()), // Navigate to ReviewPage
-                  );
-                },
-              ),
-            ),
+          ),
+          // Ikon Review
+          IconButton(
+            icon: const Icon(Icons.rate_review),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ReviewPage()), // Navigate to ReviewPage
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -85,65 +99,107 @@ class _MenuPageState extends State<MenuPage> {
             },
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60.0),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _filterMenu,
-              decoration: InputDecoration(
-                hintText: 'Search menu...',
-                prefixIcon: IconButton(
-                  icon: Icon(
-                    _microphoneController.isListening
-                        ? Icons.mic
-                        : Icons.mic_none,
-                  ),
-                  onPressed: () {
-                    if (_microphoneController.isListening) {
-                      _microphoneController.stopListening();
-                    } else {
-                      _microphoneController.startListening(_filterMenu);
-                    }
-                    setState(() {}); // Refresh UI to update mic icon state.
-                  },
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.white,
+      ),
+      body: Column(
+        children: [
+          // Dropdown untuk memilih kategori
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: DropdownButton<String>(
+              value: selectedCategory,
+              items: ["All", ..._menuController.categories]
+                  .map((category) => DropdownMenuItem(
+                        value: category,
+                        child: Text(category),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedCategory = value!;
+                });
+              },
+              isExpanded: true,
+              underline: Container(
+                height: 2,
+                color: const Color(0xFF6B4226),
               ),
             ),
           ),
-        ),
-      ),
-      body: ListView.builder(
-        itemCount: _menuList.length,
-        itemBuilder: (context, index) {
-          final menu = _menuList[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(menu.imageUrl),
-              ),
-              title: Text(menu.name),
-              subtitle: Text(menu.description),
-              trailing: Text('Rp ${menu.price}'),
-              onTap: () {
-                _cartController.addItem(CartItemModel(name: menu.name, price: menu.price));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${menu.name} added to cart')),
+          // Search Bar dan Ikon Mikrofon
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: TextEditingController(text: searchQuery),
+                    onChanged: (query) {
+                      setState(() {
+                        searchQuery = query;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Search menu...",
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: _isListening
+                      ? const Icon(Icons.stop)
+                      : const Icon(Icons.mic),
+                  onPressed: () async {
+                    if (_isListening) {
+                      await _speech.stop();
+                    } else {
+                      bool available = await _speech.initialize();
+                      if (available) {
+                        setState(() {
+                          _isListening = true;
+                        });
+                        _speech.listen(onResult: (result) {
+                          setState(() {
+                            searchQuery = result.recognizedWords;
+                          });
+                        });
+                      }
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: menuList.length,
+              itemBuilder: (context, index) {
+                final menu = menuList[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: ListTile(
+                   
+                    title: Text(menu.name),
+                    subtitle: Text(menu.description),
+                    trailing: Text('Rp ${menu.price}'),
+                    onTap: () {
+                      _cartController.addItem(
+                        CartItemModel(name: menu.name, price: menu.price),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${menu.name} added to cart')),
+                      );
+                    },
+                  ),
                 );
               },
             ),
-          );
-        },
+          ),
+        ],
       ),
-      backgroundColor: const Color.fromARGB(255, 153, 61, 4),
+      backgroundColor: const Color(0xFFFBEEC1),
     );
   }
 }

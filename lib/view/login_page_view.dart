@@ -1,5 +1,3 @@
-// lib/views/login_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
@@ -64,6 +62,12 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login'),
         backgroundColor: const Color(0xFF6F4E37),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // This will take the user back to the previous page
+          },
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
