@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lapcoffee/view/no_connection_view.dart';
 import 'package:lapcoffee/view/takeaway_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'dependency_injection.dart';
 // Import controllers
 import 'package:lapcoffee/controllers/auth_controller.dart';
 import 'package:lapcoffee/controllers/http_controller.dart';
@@ -42,12 +43,16 @@ void main() async {
   // Background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+    // Inisialisasi Dependency Injection
+  DependencyInjection.init();
+  
   // Register controllers with GetX
   Get.put(AuthController());
   Get.put(HttpController());
   Get.put(QRController());
   Get.put(ReviewController());
   Get.put(AudioController());
+  
 
   // Register AudioController with GetX
 
@@ -113,13 +118,14 @@ class MyApp extends StatelessWidget {
           name: Routes.ARTICLE_DETAILS,
           page: () => ArticleDetailPage(article: Get.arguments),
         ),
+      
         GetPage(name: Routes.QRCODE, page: () => const QRGeneratorView()),
         GetPage(name: Routes.REVIEW, page: () => ReviewPage()),
-        GetPage(
-            name: Routes.MUSIC_LIST,
-            page: () => MusicListView()),
-            GetPage(name: Routes.TAKEAWAY, page: () => const TakeawayPage()), // Music List Route
+        GetPage(name: Routes.MUSIC_LIST, page: () => MusicListView()),
+        GetPage(name: Routes.TAKEAWAY, page: () => const TakeawayPage()),
+        GetPage(name: Routes.CONNECTION, page: () => const NoConnectionView())
       ],
+
     );
   }
 }
@@ -134,6 +140,7 @@ abstract class Routes {
   static const ARTICLE_DETAILS = '/article-details';
   static const QRCODE = '/qr';
   static const REVIEW = '/review';
-  static const MUSIC_LIST = '/music-list'; 
-  static const TAKEAWAY = '/takeaway'; // Add route for Music List
+  static const MUSIC_LIST = '/music-list';
+  static const TAKEAWAY = '/takeaway';
+  static const CONNECTION = '/NoConnection';
 }
