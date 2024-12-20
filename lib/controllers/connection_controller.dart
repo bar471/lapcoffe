@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:lapcoffee/view/login_page_view.dart';
+import 'package:lapcoffee/view/menu_page.dart';
 
 class ConnectionController extends GetxController {
   final Connectivity _connectivity = Connectivity();
@@ -29,11 +29,12 @@ class ConnectionController extends GetxController {
       Get.snackbar(
         'Connectivity Status',
         'You are offline!',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
+        
       );
-      Get.offAll(() => LoginPage());
+      Get.offAll(() => MenuPage());
     } else {
       isConnected.value = true;
       Get.snackbar(
@@ -44,7 +45,7 @@ class ConnectionController extends GetxController {
         colorText: Colors.white,
       );
       if (Get.currentRoute == '/NoConnectionView') {
-        Get.offAll(() => LoginPage());  // Navigate to the login page if offline page is showing
+        Get.offAll(() => MenuPage());  // Navigate to the login page if offline page is showing
       }
       uploadPendingData(); // Upload pending data if connected
     }

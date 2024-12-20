@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lapcoffee/admin/controllers/admin_controller.dart';
+import 'package:lapcoffee/admin/views/admin_page.dart';
+import 'package:lapcoffee/bindings/connection_bindings.dart';
 import 'package:lapcoffee/view/no_connection_view.dart';
 import 'package:lapcoffee/view/takeaway_view.dart';
 import 'package:provider/provider.dart';
@@ -43,16 +46,16 @@ void main() async {
   // Background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Inisialisasi Dependency Injection
+  // Inisialisasi Dependency Injection
   DependencyInjection.init();
-  
+
   // Register controllers with GetX
   Get.put(AuthController());
   Get.put(HttpController());
   Get.put(QRController());
   Get.put(ReviewController());
   Get.put(AudioController());
-  
+  Get.put(AdminController());
 
   // Register AudioController with GetX
 
@@ -118,14 +121,19 @@ class MyApp extends StatelessWidget {
           name: Routes.ARTICLE_DETAILS,
           page: () => ArticleDetailPage(article: Get.arguments),
         ),
-      
         GetPage(name: Routes.QRCODE, page: () => const QRGeneratorView()),
         GetPage(name: Routes.REVIEW, page: () => ReviewPage()),
         GetPage(name: Routes.MUSIC_LIST, page: () => MusicListView()),
         GetPage(name: Routes.TAKEAWAY, page: () => const TakeawayPage()),
-        GetPage(name: Routes.CONNECTION, page: () => const NoConnectionView())
+        GetPage(
+            name: Routes.CONNECTION,
+            page: () => const NoConnectionView(),
+            binding: ConnectionBinding()),
+        GetPage(
+          name: Routes.ADMIN,
+          page: () => AdminPage(),
+        )
       ],
-
     );
   }
 }
@@ -143,4 +151,5 @@ abstract class Routes {
   static const MUSIC_LIST = '/music-list';
   static const TAKEAWAY = '/takeaway';
   static const CONNECTION = '/NoConnection';
+  static const ADMIN = '/Admin';
 }

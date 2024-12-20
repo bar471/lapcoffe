@@ -1,7 +1,6 @@
-// lib/controllers/auth_controller.dart
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:lapcoffee/admin/views/admin_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lapcoffee/models/user.dart';
 import 'package:lapcoffee/view/menu_page.dart';
@@ -16,6 +15,7 @@ class AuthController extends GetxController {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late final SharedPreferences _prefs;
+
   RxBool isLoading = false.obs;
   RxBool isLoggedIn = false.obs;
   Rx<UserModel?> user = Rx<UserModel?>(null);
@@ -36,7 +36,6 @@ class AuthController extends GetxController {
       final String uid = _prefs.getString('user_token')!;
       final String email = _auth.currentUser?.email ?? '';
       final String imagePath = _auth.currentUser?.photoURL ?? '';
-      
       user.value = UserModel(uid: uid, email: email, imagePath: imagePath);
       isLoggedIn.value = true;
     }
@@ -48,14 +47,14 @@ class AuthController extends GetxController {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       final String uid = userCredential.user!.uid;
 
-      // Mengunggah gambar profil jika ada
+      // Upload profile image if provided
       String? imageUrl;
       if (profileImage != null) {
         imageUrl = await _uploadProfileImage(profileImage, uid);
         await userCredential.user!.updatePhotoURL(imageUrl);
       }
 
-      // Simpan data pengguna di Firestore
+      // Save user data to Firestore
       await _firestore.collection('users').doc(uid).set({
         'email': email,
         'imagePath': imageUrl,
@@ -74,24 +73,28 @@ class AuthController extends GetxController {
     try {
       isLoading.value = true;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      
       final String uid = _auth.currentUser!.uid;
 
-      // Jika ada gambar yang dipilih saat login, unggah gambar profil baru
+      // Handle profile image
       String? profileImagePath = imagePath ?? _auth.currentUser!.photoURL ?? '';
       if (imagePath != null) {
         profileImagePath = await _uploadProfileImage(File(imagePath), uid);
         await _auth.currentUser!.updatePhotoURL(profileImagePath);
       }
-      
+
       user.value = UserModel(uid: uid, email: email, imagePath: profileImagePath);
 
-      // Simpan token ke SharedPreferences
+      // Save token to SharedPreferences
       await _prefs.setString('user_token', uid);
       isLoggedIn.value = true;
 
+      final DocumentSnapshot userDoc = await _firestore.collection('users').doc(uid).get();
+      if (userDoc.exists && userDoc['role'] == 'admin') {
+        Get.offAll(() => AdminPage());
+      } else {
+        Get.offAll(() => MenuPage());
+      }
       Get.snackbar('Success', 'Login successful', backgroundColor: Colors.green, colorText: Colors.white);
-      Get.offAll(() => MenuPage());
     } catch (error) {
       Get.snackbar('Error', 'Login failed: ${error.toString()}', backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
@@ -105,7 +108,6 @@ class AuthController extends GetxController {
       await ref.putFile(imageFile);
       return await ref.getDownloadURL();
     } catch (e) {
-      print("Error uploading profile image: $e");
       throw Exception('Failed to upload profile image');
     }
   }
@@ -116,5 +118,38 @@ class AuthController extends GetxController {
     isLoggedIn.value = false;
     user.value = null;
     Get.offAll(() => LoginPage());
+  }
+
+  Future<void> createAdminAccount() async {
+    try {
+      isLoading.value = true;
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: 'admin@lapcoffee.com',
+        password: 'admin123',
+      );
+
+      final String uid = userCredential.user!.uid;
+
+      // Save admin data in Firestore
+      await _firestore.collection('users').doc(uid).set({
+        'email': 'admin@lapcoffee.com',
+        'role': 'admin',
+      });
+
+      Get.snackbar('Success', 'Admin account created successfully', backgroundColor: Colors.green, colorText: Colors.white);
+    } catch (error) {
+      Get.snackbar('Error', 'Failed to create admin account: ${error.toString()}', backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAllUsers() async {
+    try {
+      final QuerySnapshot snapshot = await _firestore.collection('users').get();
+      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch users');
+    }
   }
 }

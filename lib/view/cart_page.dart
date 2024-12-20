@@ -271,7 +271,18 @@ class _CartPageState extends State<CartPage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6B4226),
                   ),
-                  onPressed: () {
+                  onPressed: () async{
+                    
+    // Simpan setiap item ke Firebase
+    for (var item in cartItems) {
+      await _firestore.collection('orders').add({
+        'name': item.name,
+        'quantity': item.quantity,
+        'price': item.price,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
+
                     setState(() {
                       widget.cartController.clearCart();
                     });

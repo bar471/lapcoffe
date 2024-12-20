@@ -1,8 +1,12 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
+
 import '../models/cart_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class CartController {
   final List<CartItemModel> _cartItems = [];
+  final ConnectionController = Connectivity();
 
   List<CartItemModel> getCartItems() {
     return _cartItems;
@@ -52,7 +56,8 @@ class CartController {
 
   // Mendapatkan total harga semua item dalam keranjang
   double getTotal() {
-    return _cartItems.fold(0, (sum, item) => sum + (item.price * item.quantity));
+    return _cartItems.fold(
+        0, (sum, item) => sum + (item.price * item.quantity));
   }
 
   // Menambahkan beberapa item sekaligus ke keranjang (misalnya saat checkout)
@@ -63,7 +68,8 @@ class CartController {
 
   // Mengupdate item di keranjang jika sudah ada
   void updateItem(CartItemModel updatedItem) {
-    final index = _cartItems.indexWhere((item) => item.name == updatedItem.name);
+    final index =
+        _cartItems.indexWhere((item) => item.name == updatedItem.name);
     if (index != -1) {
       _cartItems[index] = updatedItem;
       print('Item berhasil diupdate: ${updatedItem.name}');
