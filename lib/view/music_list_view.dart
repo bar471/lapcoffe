@@ -29,7 +29,7 @@ class MusicListView extends GetView<AudioController> {
         title: const Text('Coffee Music Player'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.back(),
+          onPressed: () => Get.offAllNamed('/admin'),
         ),
       ),
       body: Padding(
@@ -62,6 +62,10 @@ class MusicListView extends GetView<AudioController> {
                         title: Text(music.title),
                         trailing: ElevatedButton(
                           onPressed: () => controller.playAudio(music.url),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueGrey,
+                            foregroundColor: Colors.white,
+                          ),
                           child: const Text('Play'),
                         ),
                       ),
@@ -102,12 +106,19 @@ class MusicListView extends GetView<AudioController> {
                     onPressed: controller.isPlaying.value
                         ? controller.pauseAudio
                         : controller.resumeAudio,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey,
+                      foregroundColor: Colors.white,
+                    ),
                     child: Text(controller.isPlaying.value ? 'Pause' : 'Resume'),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: controller.stopAudio,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey,
+                      foregroundColor: Colors.white,
+                    ),
                     child: const Text('Stop'),
                   ),
                 ],
@@ -164,7 +175,10 @@ class MusicListView extends GetView<AudioController> {
                   );
                 }
               },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.brown),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 139, 125, 96),
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Add Music'),
             ),
           ],

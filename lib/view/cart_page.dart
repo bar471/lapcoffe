@@ -147,9 +147,10 @@ class _CartPageState extends State<CartPage> {
     List<CartItemModel> cartItems = widget.cartController.getCartItems();
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF3E5AB), // Latte Beige
       appBar: AppBar(
         title: const Text('Cart'),
-        backgroundColor: const Color(0xFF6B4226),
+        backgroundColor: const Color(0xFF6B4226), // Coffee Brown
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -269,19 +270,23 @@ class _CartPageState extends State<CartPage> {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B4226),
+                    backgroundColor: const Color(0xFF6B4226), // Coffee Brown
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
-                  onPressed: () async{
-                    
-    // Simpan setiap item ke Firebase
-    for (var item in cartItems) {
-      await _firestore.collection('orders').add({
-        'name': item.name,
-        'quantity': item.quantity,
-        'price': item.price,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-    }
+                  onPressed: () async {
+                    for (var item in cartItems) {
+                      await _firestore.collection('orders').add({
+                        'name': item.name,
+                        'quantity': item.quantity,
+                        'price': item.price,
+                        'timestamp': FieldValue.serverTimestamp(),
+                      });
+                    }
 
                     setState(() {
                       widget.cartController.clearCart();
@@ -302,23 +307,35 @@ class _CartPageState extends State<CartPage> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B4226),
+                    backgroundColor: const Color(0xFF8D6E63), // Secondary Coffee Brown
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: const Text('Lihat Cuaca Terkini'),
                 ),
-                   const SizedBox(height: 10),
-      ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const QRGeneratorView()),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF6B4226),
-        ),
-        child: const Text('Lihat/Mindai QR'),
-      ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const QRGeneratorView()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B4226),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Lihat/Mindai QR'),
+                ),
               ],
             ),
           ),

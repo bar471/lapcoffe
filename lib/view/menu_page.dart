@@ -6,9 +6,11 @@ import '../controllers/auth_controller.dart';
 import '../models/menu_model.dart';
 import '../models/cart_model.dart';
 import 'cart_page.dart';
-import 'package:lapcoffee/view/review_page.dart'; // Import file ReviewPage
-import 'package:lapcoffee/view/takeaway_view.dart'; // Import file TakeAwayPage
+import 'profile_page.dart'; // Import profile page
+import 'package:lapcoffee/view/review_page.dart'; // Import ReviewPage
+import 'package:lapcoffee/view/takeaway_view.dart'; // Import TakeAwayPage
 import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:permission_handler/permission_handler.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -22,39 +24,58 @@ class _MenuPageState extends State<MenuPage> {
   final CartController _cartController = CartController();
   final AuthController _authController = Get.find<AuthController>();
 
-  String selectedCategory = "All"; // Default kategori
-  String searchQuery = ""; // Untuk menyimpan query pencarian
+  String selectedCategory = "All"; // Default category
+  String searchQuery = ""; // To store search query
   late stt.SpeechToText _speech;
   bool _isListening = false;
+  late TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
+    _searchController = TextEditingController(text: searchQuery);
+    print('Speech-to-Text initialized');
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan menu berdasarkan kategori dan pencarian
+    // Fetch menu based on selected category and search query
     List<MenuModel> menuList = selectedCategory == "All"
-        ? _menuController.searchMenu(searchQuery) // Menerapkan filter pencarian
+        ? _menuController.searchMenu(searchQuery)
         : _menuController.getMenuByCategory(selectedCategory);
 
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            // Foto Profil
+            // Profile Picture
             Padding(
               padding: const EdgeInsets.only(right: 10),
-              child: Obx(() {
-                final user = _authController.user.value;
-                return CircleAvatar(
-                  backgroundImage: user?.imagePath != null && user!.imagePath.isNotEmpty
-                      ? NetworkImage(user.imagePath)
-                      : const AssetImage('assets/default_profile.png') as ImageProvider,
-                );
-              }),
+              child: GestureDetector(
+                onTap: _navigateToProfile,  // Navigate to Profile on tap
+                child: Obx(() {
+                  final user = _authController.user.value;
+                  print('User Profile: $user');
+
+                  // Check if user exists and has an imagePath (image URL)
+                  if (user != null && user.imagePath.isNotEmpty) {
+                    return CircleAvatar(
+                      backgroundImage: NetworkImage(user.imagePath), // Use image from Firestore
+                    );
+                  } else {
+                    return const CircleAvatar(
+                      backgroundImage: AssetImage('assets/default_profile.png'),
+                    );
+                  }
+                }),
+              ),
             ),
             const Text('Coffee Menu'),
           ],
@@ -62,7 +83,7 @@ class _MenuPageState extends State<MenuPage> {
         backgroundColor: const Color(0xFF6B4226),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
@@ -72,19 +93,17 @@ class _MenuPageState extends State<MenuPage> {
               );
             },
           ),
-          // Ikon untuk Take Away
           IconButton(
-            icon: const Icon(Icons.fastfood),
+            icon: const Icon(Icons.fastfood, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) =>   const TakeawayPage()), // Navigate to TakeAwayPage
+                MaterialPageRoute(builder: (context) => const TakeawayPage()), // Navigate to TakeAwayPage
               );
             },
           ),
-          // Ikon Review
           IconButton(
-            icon: const Icon(Icons.rate_review),
+            icon: const Icon(Icons.rate_review, color: Colors.white),
             onPressed: () {
               Navigator.push(
                 context,
@@ -93,7 +112,7 @@ class _MenuPageState extends State<MenuPage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () {
               _authController.logout();
             },
@@ -102,7 +121,7 @@ class _MenuPageState extends State<MenuPage> {
       ),
       body: Column(
         children: [
-          // Dropdown untuk memilih kategori
+          // Dropdown for selecting category
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: DropdownButton<String>(
@@ -115,7 +134,8 @@ class _MenuPageState extends State<MenuPage> {
                   .toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedCategory = value!;
+                  selectedCategory = value!;  // Update the selected category
+                  print('Selected Category: $selectedCategory');
                 });
               },
               isExpanded: true,
@@ -125,17 +145,18 @@ class _MenuPageState extends State<MenuPage> {
               ),
             ),
           ),
-          // Search Bar dan Ikon Mikrofon
+          // Search bar with microphone button
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
-                    controller: TextEditingController(text: searchQuery),
+                    controller: _searchController,
                     onChanged: (query) {
                       setState(() {
-                        searchQuery = query;
+                        searchQuery = query; // Update the search query
+                        print('Search Query: $searchQuery');
                       });
                     },
                     decoration: InputDecoration(
@@ -151,23 +172,7 @@ class _MenuPageState extends State<MenuPage> {
                   icon: _isListening
                       ? const Icon(Icons.stop)
                       : const Icon(Icons.mic),
-                  onPressed: () async {
-                    if (_isListening) {
-                      await _speech.stop();
-                    } else {
-                      bool available = await _speech.initialize();
-                      if (available) {
-                        setState(() {
-                          _isListening = true;
-                        });
-                        _speech.listen(onResult: (result) {
-                          setState(() {
-                            searchQuery = result.recognizedWords;
-                          });
-                        });
-                      }
-                    }
-                  },
+                  onPressed: _toggleListening,
                 ),
               ],
             ),
@@ -180,7 +185,6 @@ class _MenuPageState extends State<MenuPage> {
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: ListTile(
-                   
                     title: Text(menu.name),
                     subtitle: Text(menu.description),
                     trailing: Text('Rp ${menu.price}'),
@@ -201,5 +205,93 @@ class _MenuPageState extends State<MenuPage> {
       ),
       backgroundColor: const Color(0xFFFBEEC1),
     );
+  }
+
+  // Function to check login and navigate to Profile
+  void _navigateToProfile() async {
+    final user = _authController.user.value;
+    
+    if (user == null || user.uid.isEmpty) {
+      _showLoginDialog(context);
+    } else {
+      print('Navigating to Profile with user: ${user.uid}');
+      // Pastikan data pengguna sudah lengkap sebelum navigasi
+      if (user.uid.isNotEmpty) {
+        Get.to(() => ProfilePage()); // Corrected parameter name here
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User data is incomplete")),
+        );
+      }
+    }
+  }
+
+  // Function to show login dialog if the user is not logged in
+  void _showLoginDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Login Required"),
+          content: const Text("You need to log in to access the profile page."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Navigate to login page (replace with actual navigation)
+                // Get.to(() => LoginPage());
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to handle microphone toggle and speech-to-text
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() {
+        _isListening = false;
+      });
+    } else {
+      bool available = await _speech.initialize(
+        onStatus: (status) {
+          print('Speech-to-Text Status: $status');
+          if (status == "notListening") {
+            setState(() {
+              _isListening = false;
+            });
+          }
+        },
+        onError: (error) {
+          setState(() {
+            _isListening = false;
+          });
+          print("Speech Recognition Error: ${error.errorMsg}");
+        },
+      );
+
+      if (available) {
+        setState(() {
+          _isListening = true;
+        });
+
+        _speech.listen(
+          onResult: (result) {
+            setState(() {
+              searchQuery = result.recognizedWords;
+              _searchController.text = searchQuery;
+              print('Recognized Words: $searchQuery');
+            });
+          },
+          listenFor: const Duration(seconds: 10),
+          cancelOnError: true,
+          pauseFor: const Duration(seconds: 3),
+        );
+      }
+    }
   }
 }

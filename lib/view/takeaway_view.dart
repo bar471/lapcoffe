@@ -74,7 +74,8 @@ class _TakeawayPageState extends State<TakeawayPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Takeaway dan Pesan Makanan"),
-        backgroundColor: const Color(0xFF3E2723), // Coffee brown color for the app bar
+        backgroundColor: const Color(0xFF3E2723),
+        foregroundColor: Colors.white, // Coffee brown color for the app bar
         actions: [
           if (!_locationConfirmed)
             IconButton(
@@ -110,7 +111,7 @@ class _TakeawayPageState extends State<TakeawayPage> {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF3E2723), // Dark coffee color
+              color: Color.fromARGB(255, 255, 255, 255), // Dark coffee color
             ),
           ),
           Text(
@@ -123,7 +124,7 @@ class _TakeawayPageState extends State<TakeawayPage> {
               : ElevatedButton(
                   onPressed: _fetchLocation,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3E2723), // Coffee brown color
+                    backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Coffee brown color
                   ),
                   child: const Text('Cari Lokasi'),
                 ),
@@ -131,7 +132,7 @@ class _TakeawayPageState extends State<TakeawayPage> {
           ElevatedButton(
             onPressed: _locationController.openGoogleMaps,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF3E2723),
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             ),
             child: const Text('Buka Google Maps'),
           ),
@@ -139,7 +140,7 @@ class _TakeawayPageState extends State<TakeawayPage> {
           ElevatedButton(
             onPressed: _confirmLocation,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6D4C41), // Lighter brown for confirmation
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Lighter brown for confirmation
             ),
             child: const Text('Konfirmasi Lokasi'),
           ),

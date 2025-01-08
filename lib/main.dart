@@ -3,7 +3,10 @@ import 'package:get/get.dart';
 import 'package:lapcoffee/admin/controllers/admin_controller.dart';
 import 'package:lapcoffee/admin/views/admin_page.dart';
 import 'package:lapcoffee/bindings/connection_bindings.dart';
+import 'package:lapcoffee/controllers/user_controller.dart';
 import 'package:lapcoffee/view/no_connection_view.dart';
+import 'package:lapcoffee/view/profile_page.dart';
+import 'package:lapcoffee/view/splash_screen.dart';
 import 'package:lapcoffee/view/takeaway_view.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -56,6 +59,7 @@ void main() async {
   Get.put(ReviewController());
   Get.put(AudioController());
   Get.put(AdminController());
+  Get.put(UserController());
 
   // Register AudioController with GetX
 
@@ -110,7 +114,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      initialRoute: Routes.LANDING,
+      initialRoute: Routes.SPLASH,
       getPages: [
         GetPage(name: Routes.LANDING, page: () => const LandingPage()),
         GetPage(name: Routes.LOGIN, page: () => LoginPage()),
@@ -132,7 +136,10 @@ class MyApp extends StatelessWidget {
         GetPage(
           name: Routes.ADMIN,
           page: () => AdminPage(),
-        )
+        ),
+        GetPage(name: Routes.SPLASH, page: () => SplashScreen()),
+        GetPage(name: Routes.PROFILE, page: () => ProfilePage()),
+        
       ],
     );
   }
@@ -152,4 +159,7 @@ abstract class Routes {
   static const TAKEAWAY = '/takeaway';
   static const CONNECTION = '/NoConnection';
   static const ADMIN = '/Admin';
+  static const SPLASH = '/splash';
+  static const PROFILE = '/profile';
+
 }

@@ -16,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   File? _selectedImage;
 
+  // Function to pick image from gallery or camera
   Future<void> _pickImage() async {
     showModalBottomSheet(
       context: context,
@@ -56,12 +57,32 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  // Function to validate the form fields
+  bool _validateForm() {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      Get.snackbar('Error', 'Please fill in all fields.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
+    // Check if the email is valid
+    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    if (!emailRegex.hasMatch(_emailController.text.trim())) {
+      Get.snackbar('Error', 'Please enter a valid email.',
+          backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    }
+
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
         backgroundColor: const Color(0xFF6F4E37),
+        foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -131,14 +152,18 @@ class _LoginPageState extends State<LoginPage> {
             Obx(() {
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6F4E37),
-                ),
+                    backgroundColor: const Color(0xFF6F4E37),
+                    foregroundColor: Colors.white),
                 onPressed: () {
-                  _authController.loginUser(
-                    _emailController.text.trim(),
-                    _passwordController.text.trim(),
-                    imagePath: _selectedImage?.path,
-                  );
+                  // Validate form and proceed to login
+                  if (_validateForm()) {
+                    // Calling loginUser with imagePath and email/password
+                    _authController.loginUser(
+                      _emailController.text.trim(),
+                      _passwordController.text.trim(),
+                      newProfileImage: _selectedImage,
+                    );
+                  }
                 },
                 child: _authController.isLoading.value
                     ? const CircularProgressIndicator()

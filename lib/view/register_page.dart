@@ -13,11 +13,13 @@ class _RegisterPageState extends State<RegisterPage> {
   final AuthController _authController = Get.put(AuthController());
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController(); // New controller for name
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _nameController.dispose(); // Dispose name controller
     super.dispose();
   }
 
@@ -41,6 +43,20 @@ class _RegisterPageState extends State<RegisterPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            TextField(
+              controller: _nameController, // Added name field controller
+              style: const TextStyle(color: Color(0xFF3E2723)), // Darker brown text color
+              decoration: InputDecoration(
+                labelText: 'Name',
+                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                filled: true,
+                fillColor: const Color(0xFFFFF3E0), // Light coffee cream background
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: _emailController,
               style: const TextStyle(color: Color(0xFF3E2723)), // Darker brown text color
@@ -74,7 +90,8 @@ class _RegisterPageState extends State<RegisterPage> {
             Obx(() {
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF6F4E37), // Dark coffee brown color
+                  backgroundColor: const Color(0xFF6F4E37),
+                  foregroundColor: Colors.white, // Dark coffee brown color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0),
                   ),
@@ -82,18 +99,22 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: _authController.isLoading.value
                     ? null
                     : () {
-                        if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+                        if (_emailController.text.isEmpty || 
+                            _passwordController.text.isEmpty || 
+                            _nameController.text.isEmpty) { // Check if name is empty
                           Get.snackbar(
                             'Error',
-                            'Email and password cannot be empty',
+                            'Email, password, and name cannot be empty',
                             backgroundColor: Colors.red,
                             colorText: Colors.white,
                           );
                           return;
                         }
+                        // Pass name along with email and password
                         _authController.registerUser(
                           _emailController.text.trim(),
                           _passwordController.text.trim(),
+                          _nameController.text.trim(), // Pass the name
                         );
                       },
                 child: _authController.isLoading.value
