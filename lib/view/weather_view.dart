@@ -24,21 +24,21 @@ class _WeatherPageState extends State<WeatherPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Cuaca Terkini',
-          style: TextStyle(color: Colors.white), // Set text color to white
-        ),
-        backgroundColor: const Color(0xFF6B4226),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              // Kembali ke halaman awal atau halaman login
-              Navigator.popUntil(context, (route) => route.isFirst);
-            },
+          title: const Text(
+            'Cuaca Terkini',
+            style: TextStyle(color: Colors.white), // Set text color to white
           ),
-        ],
-      ),
+          backgroundColor: const Color(0xFF6B4226),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout),
+              onPressed: () {
+                // Kembali ke halaman awal atau halaman login
+                Navigator.popUntil(context, (route) => route.isFirst);
+              },
+            ),
+          ],
+          iconTheme: IconThemeData(color: Colors.white)),
       body: Center(
         child: FutureBuilder<Weather>(
           future: _weatherFuture,

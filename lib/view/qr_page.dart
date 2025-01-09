@@ -23,12 +23,12 @@ class _QRGeneratorViewState extends State<QRGeneratorView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'QR Code',
-          style: TextStyle(color: Colors.white), // Set text color to white
-        ),
-        backgroundColor: const Color(0xFF6F4E37),
-      ),
+          title: const Text(
+            'QR Code',
+            style: TextStyle(color: Colors.white), // Set text color to white
+          ),
+          backgroundColor: const Color(0xFF6F4E37),
+          iconTheme: IconThemeData(color: Colors.white)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

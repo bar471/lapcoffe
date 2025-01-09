@@ -22,6 +22,7 @@ class ReviewPage extends GetView<ReviewController> {
         ),
         backgroundColor: const Color(0xFF6F4E37), // Warna cokelat tua
         elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       backgroundColor: const Color(0xFFF5ECE3), // Warna krem untuk latar
       body: LayoutBuilder(

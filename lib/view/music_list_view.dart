@@ -26,7 +26,10 @@ class MusicListView extends GetView<AudioController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
-        title: const Text('Coffee Music Player'),
+        title: const Text(
+          'Coffee Music Player',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Get.offAllNamed('/admin'),
@@ -63,7 +66,8 @@ class MusicListView extends GetView<AudioController> {
                         trailing: ElevatedButton(
                           onPressed: () => controller.playAudio(music.url),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueGrey,
+                            backgroundColor:
+                                const Color.fromARGB(255, 139, 125, 96),
                             foregroundColor: Colors.white,
                           ),
                           child: const Text('Play'),
@@ -107,16 +111,17 @@ class MusicListView extends GetView<AudioController> {
                         ? controller.pauseAudio
                         : controller.resumeAudio,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey,
+                      backgroundColor: Colors.brown,
                       foregroundColor: Colors.white,
                     ),
-                    child: Text(controller.isPlaying.value ? 'Pause' : 'Resume'),
+                    child:
+                        Text(controller.isPlaying.value ? 'Pause' : 'Resume'),
                   ),
                   const SizedBox(width: 10),
                   ElevatedButton(
                     onPressed: controller.stopAudio,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey,
+                      backgroundColor: Colors.brown,
                       foregroundColor: Colors.white,
                     ),
                     child: const Text('Stop'),

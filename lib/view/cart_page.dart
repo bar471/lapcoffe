@@ -167,6 +167,7 @@ class _CartPageState extends State<CartPage> {
             },
           ),
         ],
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [

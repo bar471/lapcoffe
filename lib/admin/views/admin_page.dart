@@ -13,7 +13,10 @@ class AdminPage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Admin Dashboard'),
+          title: const Text(
+            'Admin Dashboard',
+            style: TextStyle(color: Colors.white), // Set text color to white
+          ),
           backgroundColor: Colors.brown,
           actions: [
             // Button for navigating to HTTP View
@@ -50,7 +53,7 @@ class AdminPage extends StatelessWidget {
           bottom: const TabBar(
             indicatorColor: Colors.white,
             labelColor: Colors.white,
-            unselectedLabelColor: Color.fromARGB(255, 217, 92, 50),
+            unselectedLabelColor: Color.fromARGB(177, 255, 175, 109),
             tabs: [
               Tab(text: 'Users'),
               Tab(text: 'Orders'),
@@ -85,8 +88,10 @@ class AdminPage extends StatelessWidget {
           return Card(
             color: Colors.brown.shade50,
             child: ListTile(
-              title: Text(user['name'] ?? 'Unnamed User', style: const TextStyle(color: Colors.brown)),
-              subtitle: Text(user['email'] ?? 'No Email', style: const TextStyle(color: Colors.brown)),
+              title: Text(user['name'] ?? 'Unnamed User',
+                  style: const TextStyle(color: Colors.brown)),
+              subtitle: Text(user['email'] ?? 'No Email',
+                  style: const TextStyle(color: Colors.brown)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -129,7 +134,8 @@ class AdminPage extends StatelessWidget {
           return Card(
             color: Colors.brown.shade50,
             child: ListTile(
-              title: Text(order['name'] ?? 'Unnamed Order', style: const TextStyle(color: Colors.brown)),
+              title: Text(order['name'] ?? 'Unnamed Order',
+                  style: const TextStyle(color: Colors.brown)),
               subtitle: Text(
                 'Quantity: ${order['quantity']} | Price: \$${order['price']} | Sugar Level: ${order['sugarLevel']} | Cup Size: ${order['cupSize']}',
                 style: const TextStyle(color: Colors.brown),
@@ -180,7 +186,8 @@ class AdminPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              _adminController.updateUser(user['id'], {'name': nameController.text});
+              _adminController
+                  .updateUser(user['id'], {'name': nameController.text});
               Get.back();
             },
             child: const Text('Update', style: TextStyle(color: Colors.brown)),
@@ -192,10 +199,14 @@ class AdminPage extends StatelessWidget {
 
   void _showEditOrderDialog(BuildContext context, Map<String, dynamic> order) {
     final nameController = TextEditingController(text: order['name'] ?? '');
-    final quantityController = TextEditingController(text: order['quantity']?.toString() ?? '');
-    final priceController = TextEditingController(text: order['price']?.toString() ?? '');
-    final sugarLevelController = TextEditingController(text: order['sugarLevel']?.toString() ?? '');
-    final cupSizeController = TextEditingController(text: order['cupSize']?.toString() ?? '');
+    final quantityController =
+        TextEditingController(text: order['quantity']?.toString() ?? '');
+    final priceController =
+        TextEditingController(text: order['price']?.toString() ?? '');
+    final sugarLevelController =
+        TextEditingController(text: order['sugarLevel']?.toString() ?? '');
+    final cupSizeController =
+        TextEditingController(text: order['cupSize']?.toString() ?? '');
 
     showDialog(
       context: context,
@@ -207,25 +218,30 @@ class AdminPage extends StatelessWidget {
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Name', border: OutlineInputBorder()),
             ),
             TextField(
               controller: quantityController,
-              decoration: const InputDecoration(labelText: 'Quantity', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Quantity', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
             ),
             TextField(
               controller: priceController,
-              decoration: const InputDecoration(labelText: 'Price', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Price', border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
             ),
             TextField(
               controller: sugarLevelController,
-              decoration: const InputDecoration(labelText: 'Sugar Level', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Sugar Level', border: OutlineInputBorder()),
             ),
             TextField(
               controller: cupSizeController,
-              decoration: const InputDecoration(labelText: 'Cup Size', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                  labelText: 'Cup Size', border: OutlineInputBorder()),
             ),
           ],
         ),
