@@ -65,7 +65,9 @@ class _CartPageState extends State<CartPage> {
 
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Detail tambahan telah disimpan ke Firebase')),
+                  SnackBar(
+                      content:
+                          Text('Detail tambahan telah disimpan ke Firebase')),
                 );
               },
               child: Text('Simpan'),
@@ -79,9 +81,12 @@ class _CartPageState extends State<CartPage> {
   Future<void> _editTaskDetails(DocumentSnapshot document) async {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-    TextEditingController cupSizeController = TextEditingController(text: data['cupSize']);
-    TextEditingController sugarLevelController = TextEditingController(text: data['sugarLevel']);
-    TextEditingController additionalNotesController = TextEditingController(text: data['additionalNotes']);
+    TextEditingController cupSizeController =
+        TextEditingController(text: data['cupSize']);
+    TextEditingController sugarLevelController =
+        TextEditingController(text: data['sugarLevel']);
+    TextEditingController additionalNotesController =
+        TextEditingController(text: data['additionalNotes']);
 
     await showDialog(
       context: context,
@@ -149,7 +154,10 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF3E5AB), // Latte Beige
       appBar: AppBar(
-        title: const Text('Cart'),
+        title: const Text(
+          'Cart',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
         backgroundColor: const Color(0xFF6B4226), // Coffee Brown
         actions: [
           IconButton(
@@ -168,7 +176,8 @@ class _CartPageState extends State<CartPage> {
               itemBuilder: (context, index) {
                 final item = cartItems[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: ListTile(
                     title: Text(item.name),
                     subtitle: Text('Quantity: ${item.quantity}'),
@@ -215,19 +224,24 @@ class _CartPageState extends State<CartPage> {
           ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore.collection('orders').orderBy('timestamp', descending: true).snapshots(),
+              stream: _firestore
+                  .collection('orders')
+                  .orderBy('timestamp', descending: true)
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text('Belum ada task yang dibuat'));
+                  return const Center(
+                      child: Text('Belum ada task yang dibuat'));
                 }
 
                 return ListView(
                   children: snapshot.data!.docs.map((document) {
-                    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                    Map<String, dynamic> data =
+                        document.data() as Map<String, dynamic>;
                     return ListTile(
                       title: Text(data['name'] ?? 'Unknown'),
                       subtitle: Column(
@@ -235,10 +249,13 @@ class _CartPageState extends State<CartPage> {
                         children: [
                           Text('Ukuran Cup: ${data['cupSize']}'),
                           Text('Ukuran Gula: ${data['sugarLevel']}'),
-                          Text('Deskripsi Tambahan: ${data['additionalNotes']}'),
+                          Text(
+                              'Deskripsi Tambahan: ${data['additionalNotes']}'),
                           Text('Jumlah: ${data['quantity']}'),
-                          Text('Total Harga: Rp ${data['price'] * data['quantity']}'),
-                          Text('Waktu: ${data['timestamp'] != null ? (data['timestamp'] as Timestamp).toDate().toString() : 'Unknown'}'),
+                          Text(
+                              'Total Harga: Rp ${data['price'] * data['quantity']}'),
+                          Text(
+                              'Waktu: ${data['timestamp'] != null ? (data['timestamp'] as Timestamp).toDate().toString() : 'Unknown'}'),
                         ],
                       ),
                       trailing: Row(
@@ -266,14 +283,16 @@ class _CartPageState extends State<CartPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text('Total: Rp ${widget.cartController.getTotal()}',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6B4226), // Coffee Brown
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -292,7 +311,8 @@ class _CartPageState extends State<CartPage> {
                       widget.cartController.clearCart();
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Order placed successfully!')),
+                      const SnackBar(
+                          content: Text('Order placed successfully!')),
                     );
                     Navigator.pop(context);
                   },
@@ -303,14 +323,17 @@ class _CartPageState extends State<CartPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const WeatherPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const WeatherPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8D6E63), // Secondary Coffee Brown
+                    backgroundColor:
+                        const Color(0xFF8D6E63), // Secondary Coffee Brown
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -322,14 +345,16 @@ class _CartPageState extends State<CartPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const QRGeneratorView()),
+                      MaterialPageRoute(
+                          builder: (context) => const QRGeneratorView()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF6B4226),
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

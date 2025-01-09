@@ -14,9 +14,11 @@ class TakeawayPage extends StatefulWidget {
 
 class _TakeawayPageState extends State<TakeawayPage> {
   final LocationController _locationController = LocationController();
-  final custom_menu.MenuController _menuController = custom_menu.MenuController();
-  final CartController _cartController = CartController(); // Cart controller instance
-  String _locationMessage = "Mencari Lat dan Long...";
+  final custom_menu.MenuController _menuController =
+      custom_menu.MenuController();
+  final CartController _cartController =
+      CartController(); // Cart controller instance
+  String _locationMessage = "Mencari titik lokasi anda...";
   bool _loading = false;
   bool _locationConfirmed = false;
 
@@ -47,7 +49,8 @@ class _TakeawayPageState extends State<TakeawayPage> {
 
   void _orderMenu(String menuName) {
     // Find the menu item details
-    final menu = _menuController.menuList.firstWhere((menu) => menu.name == menuName);
+    final menu =
+        _menuController.menuList.firstWhere((menu) => menu.name == menuName);
 
     // Add the ordered item to the cart
     setState(() {
@@ -90,7 +93,8 @@ class _TakeawayPageState extends State<TakeawayPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CartPage(cartController: _cartController),
+                  builder: (context) =>
+                      CartPage(cartController: _cartController),
                 ),
               );
             },
@@ -111,7 +115,7 @@ class _TakeawayPageState extends State<TakeawayPage> {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 255, 255, 255), // Dark coffee color
+              color: const Color(0xFF3E2723), // Dark coffee color
             ),
           ),
           Text(
@@ -124,9 +128,14 @@ class _TakeawayPageState extends State<TakeawayPage> {
               : ElevatedButton(
                   onPressed: _fetchLocation,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Coffee brown color
+                    backgroundColor: const Color.fromARGB(
+                        255, 255, 255, 255), // Coffee brown color
                   ),
-                  child: const Text('Cari Lokasi'),
+                  child: const Text(
+                    'Cari Lokasi Saya',
+                    style: TextStyle(
+                        color: Color(0xFF3E2723)), // Set text color to white
+                  ),
                 ),
           const SizedBox(height: 20),
           ElevatedButton(
@@ -134,15 +143,24 @@ class _TakeawayPageState extends State<TakeawayPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             ),
-            child: const Text('Buka Google Maps'),
+            child: const Text(
+              'Buka Google Maps',
+              style: TextStyle(
+                  color: Color(0xFF3E2723)), // Set text color to white
+            ),
           ),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: _confirmLocation,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255), // Lighter brown for confirmation
+              backgroundColor: const Color.fromARGB(
+                  255, 255, 255, 255), // Lighter brown for confirmation
             ),
-            child: const Text('Konfirmasi Lokasi'),
+            child: const Text(
+              'Konfirmasi Lokasi',
+              style: TextStyle(
+                  color: Color(0xFF3E2723)), // Set text color to white
+            ),
           ),
         ],
       ),
@@ -175,9 +193,15 @@ class _TakeawayPageState extends State<TakeawayPage> {
             trailing: ElevatedButton(
               onPressed: () => _orderMenu(menu.name),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6D4C41), // Lighter brown for buttons
+                backgroundColor:
+                    const Color(0xFF6D4C41), // Lighter brown for buttons
               ),
-              child: const Text('Pesan'),
+              child: const Text(
+                'Pesan',
+                style: TextStyle(
+                    color: Color.fromARGB(
+                        255, 255, 255, 255)), // Set text color to white
+              ),
             ),
           ),
         );

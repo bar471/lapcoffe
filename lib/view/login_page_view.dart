@@ -28,7 +28,8 @@ class _LoginPageState extends State<LoginPage> {
                 leading: const Icon(Icons.photo_library),
                 title: const Text('Pick from Gallery'),
                 onTap: () async {
-                  final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+                  final pickedFile = await ImagePicker()
+                      .pickImage(source: ImageSource.gallery);
                   if (pickedFile != null) {
                     setState(() {
                       _selectedImage = File(pickedFile.path);
@@ -41,7 +42,8 @@ class _LoginPageState extends State<LoginPage> {
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Take a Photo'),
                 onTap: () async {
-                  final pickedFile = await ImagePicker().pickImage(source: ImageSource.camera);
+                  final pickedFile =
+                      await ImagePicker().pickImage(source: ImageSource.camera);
                   if (pickedFile != null) {
                     setState(() {
                       _selectedImage = File(pickedFile.path);
@@ -66,7 +68,8 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     // Check if the email is valid
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
+    final emailRegex =
+        RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$');
     if (!emailRegex.hasMatch(_emailController.text.trim())) {
       Get.snackbar('Error', 'Please enter a valid email.',
           backgroundColor: Colors.red, colorText: Colors.white);
@@ -86,16 +89,15 @@ class _LoginPageState extends State<LoginPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // This will take the user back to the previous page
+            Navigator.pop(context); // Take user back to the previous page
           },
         ),
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFDAB98E), Color(0xFF6F4E37)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
         padding: const EdgeInsets.all(16.0),
@@ -103,16 +105,33 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            GestureDetector(
+              onTap: _pickImage,
+              child: CircleAvatar(
+                radius: 40,
+                backgroundImage: _selectedImage != null
+                    ? FileImage(_selectedImage!)
+                    : const AssetImage('assets/default_profile.png')
+                        as ImageProvider,
+                backgroundColor: const Color(0xFFBCAAA4),
+                child: _selectedImage == null
+                    ? const Icon(Icons.add_a_photo,
+                        size: 40, color: Colors.white)
+                    : null,
+              ),
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: _emailController,
-              style: const TextStyle(color: Color(0xFF3E2723)),
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Email',
-                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                labelStyle: const TextStyle(color: Colors.white),
                 filled: true,
-                fillColor: const Color(0xFFFFF3E0),
+                fillColor: Colors.black.withOpacity(0.5), // Transparan
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
                 ),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -121,32 +140,19 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              style: const TextStyle(color: Color(0xFF3E2723)),
+              style: const TextStyle(color: Colors.white),
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                labelStyle: const TextStyle(color: Colors.white),
                 filled: true,
-                fillColor: const Color(0xFFFFF3E0),
+                fillColor: Colors.black.withOpacity(0.5), // Transparan
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
                 ),
               ),
               autofillHints: [AutofillHints.password],
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 40,
-                backgroundImage: _selectedImage != null
-                    ? FileImage(_selectedImage!)
-                    : const AssetImage('assets/default_profile.png') as ImageProvider,
-                backgroundColor: const Color(0xFFBCAAA4),
-                child: _selectedImage == null
-                    ? const Icon(Icons.add_a_photo, size: 40, color: Colors.white)
-                    : null,
-              ),
             ),
             const SizedBox(height: 16),
             Obx(() {
@@ -176,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
               },
               child: const Text(
                 'Register Here',
-                style: TextStyle(color: Color(0xFF3E2723)),
+                style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
               ),
             ),
           ],

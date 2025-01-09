@@ -15,8 +15,10 @@ class ReviewPage extends GetView<ReviewController> {
         title: const Text(
           'Cafe Review',
           style: TextStyle(
-            fontFamily: 'Lobster', // Pastikan font ini sudah ditambahkan di proyek
-          ),
+              fontFamily: 'Lobster',
+              color:
+                  Colors.white // Pastikan font ini sudah ditambahkan di proyek
+              ),
         ),
         backgroundColor: const Color(0xFF6F4E37), // Warna cokelat tua
         elevation: 0,
@@ -244,7 +246,11 @@ class ReviewPage extends GetView<ReviewController> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: const Text('Submit Review'),
+                      child: Text(
+                        'Submit Review',
+                        style: TextStyle(
+                            color: Colors.white), // Set text color to white
+                      ),
                     ),
                   ],
                 ),

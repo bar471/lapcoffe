@@ -10,7 +10,6 @@ import 'profile_page.dart'; // Import profile page
 import 'package:lapcoffee/view/review_page.dart'; // Import ReviewPage
 import 'package:lapcoffee/view/takeaway_view.dart'; // Import TakeAwayPage
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:permission_handler/permission_handler.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -59,7 +58,7 @@ class _MenuPageState extends State<MenuPage> {
             Padding(
               padding: const EdgeInsets.only(right: 10),
               child: GestureDetector(
-                onTap: _navigateToProfile,  // Navigate to Profile on tap
+                onTap: _navigateToProfile, // Navigate to Profile on tap
                 child: Obx(() {
                   final user = _authController.user.value;
                   print('User Profile: $user');
@@ -67,7 +66,8 @@ class _MenuPageState extends State<MenuPage> {
                   // Check if user exists and has an imagePath (image URL)
                   if (user != null && user.imagePath.isNotEmpty) {
                     return CircleAvatar(
-                      backgroundImage: NetworkImage(user.imagePath), // Use image from Firestore
+                      backgroundImage: NetworkImage(
+                          user.imagePath), // Use image from Firestore
                     );
                   } else {
                     return const CircleAvatar(
@@ -77,7 +77,10 @@ class _MenuPageState extends State<MenuPage> {
                 }),
               ),
             ),
-            const Text('Coffee Menu'),
+            const Text(
+              'Coffee Menu',
+              style: TextStyle(color: Colors.white), // Set text color to white
+            ),
           ],
         ),
         backgroundColor: const Color(0xFF6B4226),
@@ -88,7 +91,8 @@ class _MenuPageState extends State<MenuPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CartPage(cartController: _cartController),
+                  builder: (context) =>
+                      CartPage(cartController: _cartController),
                 ),
               );
             },
@@ -98,7 +102,9 @@ class _MenuPageState extends State<MenuPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const TakeawayPage()), // Navigate to TakeAwayPage
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const TakeawayPage()), // Navigate to TakeAwayPage
               );
             },
           ),
@@ -107,7 +113,9 @@ class _MenuPageState extends State<MenuPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ReviewPage()), // Navigate to ReviewPage
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const ReviewPage()), // Navigate to ReviewPage
               );
             },
           ),
@@ -134,7 +142,7 @@ class _MenuPageState extends State<MenuPage> {
                   .toList(),
               onChanged: (value) {
                 setState(() {
-                  selectedCategory = value!;  // Update the selected category
+                  selectedCategory = value!; // Update the selected category
                   print('Selected Category: $selectedCategory');
                 });
               },
@@ -183,7 +191,8 @@ class _MenuPageState extends State<MenuPage> {
               itemBuilder: (context, index) {
                 final menu = menuList[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: ListTile(
                     title: Text(menu.name),
                     subtitle: Text(menu.description),
@@ -210,7 +219,7 @@ class _MenuPageState extends State<MenuPage> {
   // Function to check login and navigate to Profile
   void _navigateToProfile() async {
     final user = _authController.user.value;
-    
+
     if (user == null || user.uid.isEmpty) {
       _showLoginDialog(context);
     } else {

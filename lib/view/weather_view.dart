@@ -16,14 +16,18 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void initState() {
     super.initState();
-    _weatherFuture = _weatherService.fetchWeather('Malang'); // Ganti dengan kota yang diinginkan
+    _weatherFuture = _weatherService
+        .fetchWeather('Malang'); // Ganti dengan kota yang diinginkan
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cuaca Terkini'),
+        title: const Text(
+          'Cuaca Terkini',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
         backgroundColor: const Color(0xFF6B4226),
         actions: [
           IconButton(
@@ -48,9 +52,12 @@ class _WeatherPageState extends State<WeatherPage> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Cuaca: ${weather.description}', style: const TextStyle(fontSize: 20)),
-                  Text('Suhu: ${weather.temperature}°C', style: const TextStyle(fontSize: 20)),
-                  Text('Terasa seperti: ${weather.feelsLike}°C', style: const TextStyle(fontSize: 20)),
+                  Text('Cuaca: ${weather.description}',
+                      style: const TextStyle(fontSize: 20)),
+                  Text('Suhu: ${weather.temperature}°C',
+                      style: const TextStyle(fontSize: 20)),
+                  Text('Terasa seperti: ${weather.feelsLike}°C',
+                      style: const TextStyle(fontSize: 20)),
                 ],
               );
             } else {

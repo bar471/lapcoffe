@@ -13,7 +13,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final AuthController _authController = Get.put(AuthController());
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController(); // New controller for name
+  final TextEditingController _nameController =
+      TextEditingController(); // New controller for name
 
   @override
   void dispose() {
@@ -27,15 +28,17 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text(
+          'Register',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
         backgroundColor: const Color(0xFF6F4E37), // Dark coffee brown color
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFDAB98E), Color(0xFF6F4E37)], // Coffee-inspired gradient
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
         padding: const EdgeInsets.all(16.0),
@@ -45,28 +48,30 @@ class _RegisterPageState extends State<RegisterPage> {
           children: [
             TextField(
               controller: _nameController, // Added name field controller
-              style: const TextStyle(color: Color(0xFF3E2723)), // Darker brown text color
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Name',
-                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                labelStyle: const TextStyle(color: Colors.white),
                 filled: true,
-                fillColor: const Color(0xFFFFF3E0), // Light coffee cream background
+                fillColor: Colors.black.withOpacity(0.5), // Transparan
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none, // No border
                 ),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _emailController,
-              style: const TextStyle(color: Color(0xFF3E2723)), // Darker brown text color
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 labelText: 'Email',
-                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                labelStyle: const TextStyle(color: Colors.white),
                 filled: true,
-                fillColor: const Color(0xFFFFF3E0), // Light coffee cream background
+                fillColor: Colors.black.withOpacity(0.5), // Transparan
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none, // No border
                 ),
               ),
               keyboardType: TextInputType.emailAddress,
@@ -74,15 +79,16 @@ class _RegisterPageState extends State<RegisterPage> {
             const SizedBox(height: 16),
             TextField(
               controller: _passwordController,
-              style: const TextStyle(color: Color(0xFF3E2723)),
+              style: const TextStyle(color: Colors.white),
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                labelStyle: const TextStyle(color: Color(0xFF3E2723)),
+                labelStyle: const TextStyle(color: Colors.white),
                 filled: true,
-                fillColor: const Color(0xFFFFF3E0),
+                fillColor: Colors.black.withOpacity(0.5), // Transparan
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none, // No border
                 ),
               ),
             ),
@@ -99,9 +105,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 onPressed: _authController.isLoading.value
                     ? null
                     : () {
-                        if (_emailController.text.isEmpty || 
-                            _passwordController.text.isEmpty || 
-                            _nameController.text.isEmpty) { // Check if name is empty
+                        if (_emailController.text.isEmpty ||
+                            _passwordController.text.isEmpty ||
+                            _nameController.text.isEmpty) {
                           Get.snackbar(
                             'Error',
                             'Email, password, and name cannot be empty',
@@ -110,7 +116,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           );
                           return;
                         }
-                        // Pass name along with email and password
                         _authController.registerUser(
                           _emailController.text.trim(),
                           _passwordController.text.trim(),

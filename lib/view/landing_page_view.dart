@@ -12,8 +12,8 @@ class LandingPage extends StatelessWidget {
           SizedBox(
             height: double.infinity,
             width: double.infinity,
-            child: Image.network(
-              'https://iili.io/2d2BYXa.md.webp',
+            child: Image.asset(
+              'assets/images/background.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -61,7 +61,8 @@ class LandingPage extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 15),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFE0A75E), // Ganti sesuai warna palet
+                      color:
+                          const Color(0xFFE0A75E), // Ganti sesuai warna palet
                       borderRadius: BorderRadius.circular(30),
                       boxShadow: [
                         BoxShadow(

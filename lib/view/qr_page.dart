@@ -23,7 +23,10 @@ class _QRGeneratorViewState extends State<QRGeneratorView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QR Code Generator'),
+        title: const Text(
+          'QR Code',
+          style: TextStyle(color: Colors.white), // Set text color to white
+        ),
         backgroundColor: const Color(0xFF6F4E37),
       ),
       body: Padding(
@@ -59,7 +62,11 @@ class _QRGeneratorViewState extends State<QRGeneratorView> {
                   const SnackBar(content: Text('QR Code Generated!')),
                 );
               },
-              child: const Text('Generate'),
+              child: const Text(
+                'Generate',
+                style:
+                    TextStyle(color: Colors.white), // Set text color to white
+              ),
             ),
           ],
         ),
